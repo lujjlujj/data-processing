@@ -1,7 +1,5 @@
-Hello Spring Cloud Connectors
+Data Processing Application
 ============
-
-A [Spring Boot application](http://github.com/cloudfoundry-samples/hello-spring-cloud) that uses [Spring Cloud Connectors](https://cloud.spring.io/spring-cloud-connectors/) to connect to cloud services and get information about cloud environment.
 
 ## Building the application
 
