@@ -17,14 +17,12 @@ public class ListJsonConverterTest {
 
     private ListJsonConverter CSVJsonConverter = new ListJsonConverterImpl();
 
-    private String folderPath = "/Users/tezza/Documents/projects/hello-spring-cloud-master/src/test/resources/";
-
     @Test
     public void testConvertCSV2JSON() throws Exception {
-        String csvFilePath = folderPath + "csv/PhysiologicalData.csv";
-        String jsonFilePath = folderPath + String.format("json/PhysiologicalData_json_%s.txt"
+        ClassLoader classLoader = getClass().getClassLoader();
+        String jsonFilePath = String.format("json/PhysiologicalData_json_%s.txt"
                 , Math.random());
-        CsvReader reader = new CsvReader(csvFilePath, ',', Charset.forName("UTF-8"));
+        CsvReader reader = new CsvReader(classLoader.getResource("csv/PhysiologicalData.csv").getFile(), ',', Charset.forName("UTF-8"));
         try {
             List<String> headers = new ArrayList<String>();
 
@@ -50,8 +48,9 @@ public class ListJsonConverterTest {
 
     @Test
     public void testConvertJSON2CSV() throws Exception {
-        String jsonFilePath = folderPath + "json/PhysiologicalData.txt";
-        String csvFilePath = folderPath + String.format("csv/PhysiologicalData_json_%s.csv"
+        ClassLoader classLoader = getClass().getClassLoader();
+        String jsonFilePath = classLoader.getResource("json/PhysiologicalData.txt").getFile();
+        String csvFilePath = String.format("csv/PhysiologicalData_json_%s.csv"
                 , Math.random());
         Boolean orderKeyRequired = false;
         List<String> lines = FileUtils.readLines(new File(jsonFilePath), Charset.forName("UTF-8"));
@@ -66,12 +65,9 @@ public class ListJsonConverterTest {
                         headers.add(keys.next().toString());
                     }
                 } else {
-//                    headers = Arrays.asList(new String[] {"Year","Organization","Department",
-//                            "Position","Position count","Planned position count","Expense total",
-//                                    "Course cost","Course days","Terminations","Internal hires","External hires"});
-                    headers = Arrays.asList(new String[] {"cad","sod","dm","bgr","bp","sc","pcc","bu","sg",
-                            "pot","ane","appet","wbcc","class","su","pcv","htn","rbcc","al","hemo",
-                            "rbc","pc","pe","age","ba"});
+                    headers = Arrays.asList(new String[]{"cad", "sod", "dm", "bgr", "bp", "sc", "pcc", "bu", "sg",
+                            "pot", "ane", "appet", "wbcc", "class", "su", "pcv", "htn", "rbcc", "al", "hemo",
+                            "rbc", "pc", "pe", "age", "ba"});
                 }
                 csvWriter.writeRecord(headers.toArray(new String[headers.size()]));
                 for (String line : lines) {

@@ -19,12 +19,11 @@ public class ListXMLConverterTest {
 
     private ListXMLConverter CSVxmlConverter = new ListXMLConverterImpl();
 
-        private String folderPath = "/Users/tezza/Documents/projects/hello-spring-cloud-master/src/test/resources/";
-
     @Test
     public void testConvertCSV2XML() throws Exception {
-        String csvFilePath = folderPath + "csv/PhysiologicalData.csv";
-        String xmlFilePath = folderPath + String.format("xml/PhysiologicalData_xml_%s.txt"
+        ClassLoader classLoader = getClass().getClassLoader();
+        String csvFilePath = classLoader.getResource("csv/PhysiologicalData.csv").getFile();
+        String xmlFilePath = String.format("xml/PhysiologicalData_xml_%s.txt"
                 , Math.random());
         CsvReader reader = new CsvReader(csvFilePath, ',', Charset.forName("UTF-8"));
         try {
@@ -52,8 +51,9 @@ public class ListXMLConverterTest {
 
     @Test
     public void testConvertXML2CSV() throws Exception {
-        String xmlFilePath = folderPath + "xml/PhysiologicalData.txt";
-        String csvFilePath = folderPath + String.format("csv/PhysiologicalData_xml_%s.csv"
+        ClassLoader classLoader = getClass().getClassLoader();
+        String xmlFilePath = classLoader.getResource("xml/PhysiologicalData.txt").getFile();
+        String csvFilePath = String.format("csv/PhysiologicalData_xml_%s.csv"
                 , Math.random());
         Boolean orderKeyRequired = false;
         List<String> lines = FileUtils.readLines(new File(xmlFilePath), Charset.forName("UTF-8"));
@@ -65,18 +65,15 @@ public class ListXMLConverterTest {
                     SAXBuilder builder = new SAXBuilder();
                     Document doc = builder.build(new StringReader(lines.get(0)));
                     Element element = doc.getRootElement();
-                    List<Element> elements = element.getChildren();;
-                    for (Element element1:  elements) {
+                    List<Element> elements = element.getChildren();
+                    ;
+                    for (Element element1 : elements) {
                         headers.add(element1.getName());
                     }
                 } else {
-//                    headers = Arrays.asList(new String[] {"Year","Organization","Department",
-//                            "Position","Position count","Planned position count","Expense total",
-//                                    "Course cost","Course days","Terminations","Internal hires","External hires"});
-
-                    headers = Arrays.asList(new String[] {"cad","sod","dm","bgr","bp","sc","pcc","bu","sg",
-                                    "pot","ane","appet","wbcc","class","su","pcv","htn","rbcc","al","hemo",
-                                    "rbc","pc","pe","age","ba"});
+                    headers = Arrays.asList(new String[]{"cad", "sod", "dm", "bgr", "bp", "sc", "pcc", "bu", "sg",
+                            "pot", "ane", "appet", "wbcc", "class", "su", "pcv", "htn", "rbcc", "al", "hemo",
+                            "rbc", "pc", "pe", "age", "ba"});
                 }
                 csvWriter.writeRecord(headers.toArray(new String[headers.size()]));
                 for (String line : lines) {
