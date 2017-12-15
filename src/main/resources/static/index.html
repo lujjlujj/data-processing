@@ -75,6 +75,8 @@
         }
 
         $scope.trigger = function (type) {
+            $scope.alertHiddenRequired = 'ng-hide';
+            $scope.successMsgHiddenRequired = 'ng-hide';
             var format = {};
             format.type = type;
             $http.post("/trigger" ,format).then(function successCallback(response) {
