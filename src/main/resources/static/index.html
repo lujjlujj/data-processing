@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>NHSBT AI Grant Data Processing</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css"
+          integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+    <link href="css/main.css" rel="stylesheet">
+</head>
+<body ng-app="dataProcessingApp" ng-cloak>
+<div id="appForm" ng-controller="FormCtrl">
+
+
+    <nav class="navbar navbar-inverse bg-primary">
+        <div flex="85" class="text-white">
+            <label>Welcome: {{user.principal.username}}</label>
+        </div>
+        <div flex="15">
+            <a class="text-white" href="#" ng-click="logout()">Logout</a>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="alert alert-danger {{alertHiddenRequired}}" role="alert">
+            {{alertContent}}
+        </div>
+
+        <div class="alert alert-success {{successMsgHiddenRequired}}" role="alert">
+            {{successMsgContent}}
+        </div>
+
+        <div class="card">
+            <div class="card-header text-white bg-primary mb-3">
+                Data Processing
+            </div>
+            <div class="card-block">
+                <a href="#" class="btn btn-primary main-button" ng-click="trigger('csv')">Convert to CSV</a>
+                <a href="#" class="btn btn-primary main-button" ng-click="trigger('json')">Convert to JSON</a>
+                <a href="#" class="btn btn-primary main-button"ng-click="trigger('xml')">Convert to XML</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-route.js"></script>
+
+<script type="text/javascript">
+    var app = angular.module('dataProcessingApp', ['ng', 'ngRoute']);
+
+    app.controller('FormCtrl', function ($scope, $timeout, $http, $httpParamSerializerJQLike) {
+
+        $scope.alertHiddenRequired = 'ng-hide';
+        $scope.successMsgHiddenRequired = 'ng-hide';
+
+        $http.get("/user")
+            .then(function successCallback(response) {
+                if (response && response.status && response.status == '200' && response.data != null) {
+                    $scope.user = response.data;
+                }
+            }, function errorCallback(response) {
+            });
+
+        $scope.logout = function () {
+
+            $http.post("/logout").then(function successCallback(response) {
+                if (response && response.status && response.status == '200' && response.data.success == 'true') {
+                    window.location = "/login";
+                } else {
+                    $scope.showAlert("Error", "Failed to logout.");
+                }
+            }, function errorCallback(response) {
+                $scope.showAlert("Error", "Failed to logout.");
+            });
+        }
+
+        $scope.trigger = function (type) {
+            var format = {};
+            format.type = type;
+            $http.post("/trigger" ,format).then(function successCallback(response) {
+                    if (response && response.status && response.status == '200' && response.data.code == '0') {
+                        $scope.showSuccessMsg("Trigger the job successfully.");
+                    } else {
+                        $scope.showAlert("Error", "Failed to trigger.");
+                    }
+            }, function errorCallback(response) {
+                $scope.showAlert("Error", "Failed to trigger.");
+            });
+
+        }
+
+        $scope.logout = function () {
+
+            $http.post("/logout").then(function successCallback(response) {
+                if (response && response.status && response.status == '200' && response.data.success == 'true') {
+                    window.location = "/login";
+                } else {
+                    $scope.showAlert("Error", "Failed to logout.");
+                }
+            }, function errorCallback(response) {
+                $scope.showAlert("Error", "Failed to logout.");
+            });
+        }
+
+        $scope.showAlert = function (Title, TextContent) {
+            $scope.alertContent = TextContent;
+            $scope.alertHiddenRequired = '';
+        };
+
+        $scope.showSuccessMsg = function (TextContent) {
+            $scope.successMsgContent = TextContent;
+            $scope.successMsgHiddenRequired = '';
+        };
+
+        $scope.dataFormat = {
+            type: ''
+        }
+    });
+</script>
+</body>
+</html>

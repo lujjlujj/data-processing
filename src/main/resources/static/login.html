@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>NHSBT AI Grant Data Processing</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+    <link href="css/signin.css" rel="stylesheet">
+</head>
+<body ng-app="dataProcessingApp" ng-cloak>
+    <div id="appForm" class="container" ng-controller="FormCtrl" >
+        <div class="alert alert-danger {{alertHiddenRequired}}" role="alert">
+            {{alertContent}}
+        </div>
+
+        <div class="card">
+            <div class="card-header text-white bg-primary mb-3">
+                Please sign in
+            </div>
+            <div class="panel-body">
+                <form class="form-signin" name="signinForm">
+                    <label for="inputUsername" class="sr-only">Username</label>
+                    <input type="username" id="inputUsername" class="form-control" ng-model="event.username" placeholder="Username" required autofocus>
+                    <label for="inputPassword" class="sr-only">Password</label>
+                    <input type="password" id="inputPassword" class="form-control" ng-model="event.password" placeholder="Password" required>
+                    <button class="btn btn-lg btn-primary btn-block" type="submit" ng-click="submitFormData()" ng-disabled="signinForm.$invalid">Sign in</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-route.js"></script>
+
+    <script type="text/javascript">
+        var app = angular.module('dataProcessingApp',['ng' , 'ngRoute']);
+
+        app.controller('FormCtrl', function($scope, $timeout, $http, $httpParamSerializerJQLike) {
+
+            $scope.event = {
+                username: 'user',
+                password: 'password',
+                submit: 'login'
+            }
+            $scope.alertHiddenRequired = 'ng-hide';
+
+            $scope.cleanAllInput = function() {
+                $scope.event = {
+                    username: 'user',
+                    password: 'password',
+                    submit: 'login'
+                };
+            }
+
+            $scope.submitFormData = function() {
+                $scope.alertHiddenRequired = 'ng-hide';
+                $http.post("/login", $httpParamSerializerJQLike($scope.event),
+                    {headers:{'Content-Type':'application/x-www-form-urlencoded',
+                        'x-requested-with':'ajax'
+                    }})
+                    .then(function successCallback(response) {
+                        if (response && response.status && response.status == '200' && response.data.success == 'true') {
+                            window.location = "/";
+                        } else {
+                            $scope.showAlert("Error", "Invalid Username and Password.");
+                        }
+                    }, function errorCallback(response) {
+                        $scope.showAlert("Error", "Failed to login because the service is not available.");
+                    });
+            }
+            $scope.showAlert = function (Title, TextContent) {
+                $scope.alertContent = TextContent;
+                $scope.alertHiddenRequired = '';
+            };
+        });
+    </script>
+</body>
+</html>
