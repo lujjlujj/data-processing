@@ -33,7 +33,7 @@ public class ListXMLConverterImpl implements ListXMLConverter {
     @Override
     public String convertCSV2XML(List<String> data, List<String> headers) throws Exception {
         if (data.size() < headers.size()) {
-            throw new Exception("The size of data and headers is not the same.");
+            throw new Exception("The size of persistence and headers is not the same.");
         }
         Document document = new Document();
         Element root = new Element("root");

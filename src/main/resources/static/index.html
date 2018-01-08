@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css"
           integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
     <link href="css/main.css" rel="stylesheet">
+    <link href="css/modal.css" rel="stylesheet">
 </head>
 <body ng-app="dataProcessingApp" ng-cloak>
 <div id="appForm" ng-controller="FormCtrl">
@@ -20,39 +21,107 @@
         </div>
     </nav>
     <div class="container">
-        <div class="alert alert-danger {{alertHiddenRequired}}" role="alert">
+        <div class="alert alert-danger animate-show animate-hide" ng-hide="alertHiddenRequired" role="alert">
             {{alertContent}}
         </div>
 
-        <div class="alert alert-success {{successMsgHiddenRequired}}" role="alert">
+        <div class="alert alert-success animate-show animate-hide" ng-hide="successMsgHiddenRequired" role="alert">
             {{successMsgContent}}
         </div>
 
-        <div class="card">
+        <div class="card main-section">
             <div class="card-header text-white bg-primary mb-3">
-                Data Processing
+                Arrest Time Prediction
             </div>
             <div class="card-block">
-                <a href="#" class="btn btn-primary main-button" ng-click="trigger('csv')">Convert to CSV</a>
-                <a href="#" class="btn btn-primary main-button" ng-click="trigger('json')">Convert to JSON</a>
-                <a href="#" class="btn btn-primary main-button"ng-click="trigger('xml')">Convert to XML</a>
+                <div class="row">
+                    <div class="col-md-12">
+                        <input class="main-button" type="file" files-input ng-model="fileArray">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <a href="#" class="btn btn-primary main-button" ng-click="upload()">Perform Prediction</a>
+                        <a href="#" class="btn btn-primary main-button" ng-click="continue()" ng-hide="continueButtonRequired">Continue</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card main-section" ng-hide="showPredictionResultRequired">
+            <div class="card-header text-white bg-primary mb-3">
+                Prediction Result
+            </div>
+            <div class="card-block">
+                <table class="table main-table">
+                    <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Arrest Time (Days)</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="item in predictionResult">
+                        <th scope="row">{{item.id}}</th>
+                        <td>{{item.arrestTime}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card main-section" ng-hide="showInvalidDataRecordsRequired">
+            <div class="card-header text-white bg-primary mb-3">
+                Invalid Data Records
+            </div>
+            <div class="card-block">
+                <table class="table main-table">
+                    <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Column Names</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="item in validationDatas">
+                        <th scope="row">{{item.id}}</th>
+                        <td>{{item.columnNames}}</td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 </div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
-
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-route.js"></script>
-
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-animate.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.5.0/ui-bootstrap.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.5.0/ui-bootstrap-tpls.js"></script>
+<script src="js/messageModal.js"></script>
 <script type="text/javascript">
-    var app = angular.module('dataProcessingApp', ['ng', 'ngRoute']);
+    var app = angular.module('dataProcessingApp', ['ng', 'ngRoute', 'ui.bootstrap', 'ngAnimate']);
 
-    app.controller('FormCtrl', function ($scope, $timeout, $http, $httpParamSerializerJQLike) {
+    app.directive("filesInput", function() {
+        return {
+            require: "ngModel",
+            link: function postLink(scope,elem,attrs,ngModel) {
+                elem.on("change", function(e) {
+                    var files = elem[0].files;
+                    ngModel.$setViewValue(files);
+                })
+            }
+        }
+    });
 
-        $scope.alertHiddenRequired = 'ng-hide';
-        $scope.successMsgHiddenRequired = 'ng-hide';
+    app.controller('FormCtrl', function ($scope, $timeout, $http, $uibModal, $log) {
 
+        $scope.alertHiddenRequired = true;
+        $scope.successMsgHiddenRequired = true;
+        $scope.showInvalidDataRecordsRequired = true;
+        $scope.showPredictionResultRequired = true;
+        $scope.continueButtonRequired = true;
         $http.get("/user")
             .then(function successCallback(response) {
                 if (response && response.status && response.status == '200' && response.data != null) {
@@ -74,14 +143,63 @@
             });
         }
 
+        $scope.continue = function() {
+            $scope.alertHiddenRequired = true;
+            $http.post("/confirmPrediction").then(function successCallback(response) {
+                if (response && response.status && response.status == '200' && response.data.code == '0') {
+                    $scope.showSuccessMsg("Message", "The prediction is performed successfully, please review the result.");
+                    $scope.predictionResult = response.data.returnValue;
+                    $scope.showPredictionResultRequired = false;
+                    $scope.continueButtonRequired = true;
+                } else {
+                    $scope.showAlert("Error", "Failed to perform prediction due to internal error, please contact system admin.");
+                }
+            }, function errorCallback(response) {
+                $scope.showAlert("Error", "Failed to perform prediction due to internal error, please contact system admin.");
+            });
+        }
+
+        $scope.upload = function() {
+            $scope.showInvalidDataRecordsRequired = true;
+            $scope.continueButtonRequired = true;
+            $scope.showPredictionResultRequired = true;
+            if ($scope.fileArray == null || $scope.fileArray == undefined || $scope.fileArray.length == 0) {
+                $scope.showAlert("Error", "Please choose file for prediction.");
+                return;
+            }
+            var formdata = new FormData();
+            formdata.append("file", $scope.fileArray[0]);
+            $http.post("/predict" ,formdata, {
+                transformRequest: angular.identity,
+                headers: {'Content-Type': undefined}
+            }).then(function successCallback(response) {
+                if (response && response.status && response.status == '200' && response.data.code == '0') {
+                    $scope.showSuccessMsg("Message", "The prediction is performed successfully, please review the result.");
+                    $scope.predictionResult = response.data.returnValue;
+                    $scope.continueButtonRequired = true;
+                    $scope.showPredictionResultRequired = false;
+                } else if (response && response.status && response.status == '200' && response.data.code == '2') {
+                    $scope.showAlert("Error", "Some data fields are empty, please click 'Continue' button if you still want to continue.");
+                    $scope.validationDatas = response.data.returnValue;
+                    $scope.showInvalidDataRecordsRequired = false;
+                    $scope.continueButtonRequired = false;
+                } else {
+                    $scope.showAlert("Error", "Failed to perform prediction due to internal error, please contact system admin.");
+                }
+            }, function errorCallback(response) {
+                $scope.showAlert("Error", "Failed to perform prediction due to internal error, please contact system admin.");
+            });
+        }
+
         $scope.trigger = function (type) {
-            $scope.alertHiddenRequired = 'ng-hide';
-            $scope.successMsgHiddenRequired = 'ng-hide';
+            $scope.alertHiddenRequired = true;
+            $scope.successMsgHiddenRequired = true;
             var format = {};
             format.type = type;
             $http.post("/trigger" ,format).then(function successCallback(response) {
                     if (response && response.status && response.status == '200' && response.data.code == '0') {
-                        $scope.showSuccessMsg("Trigger the job successfully.");
+                        $scope.open();
+                        $scope.showSuccessMsg("Message", "The job is triggered successfully.");
                     } else {
                         $scope.showAlert("Error", "Failed to trigger.");
                     }
@@ -106,18 +224,35 @@
 
         $scope.showAlert = function (Title, TextContent) {
             $scope.alertContent = TextContent;
-            $scope.alertHiddenRequired = '';
+            $scope.dialogTitle = Title;
+            $scope.textContent = TextContent;
+            $scope.alertHiddenRequired = false;
+            $timeout(function () {
+                $scope.alertHiddenRequired = true;
+            },10000);
         };
 
-        $scope.showSuccessMsg = function (TextContent) {
+        $scope.showSuccessMsg = function (Title, TextContent) {
             $scope.successMsgContent = TextContent;
-            $scope.successMsgHiddenRequired = '';
+            $scope.successMsgHiddenRequired = false;
+            $scope.dialogTitle = Title;
+            $scope.textContent = TextContent;
+            $timeout(function () {
+                $scope.successMsgHiddenRequired = true;
+            },10000);
         };
 
-        $scope.dataFormat = {
-            type: ''
-        }
+        $scope.open = function () {
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: "templates/messageModal.html",
+                controller: "MessageModalCtrl",
+                scope: $scope
+            });
+        };
     });
+
+    app.controller("MessageModalCtrl", modal);
 </script>
 </body>
 </html>

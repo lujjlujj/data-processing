@@ -29,7 +29,7 @@ public class ListJsonConverterImpl implements ListJsonConverter {
     @Override
     public String convertCSV2JSON(List<String> data, List<String> headers) throws Exception {
         if (data.size() < headers.size()) {
-            throw new Exception("The size of data and headers is not the same." + data.get(0));
+            throw new Exception("The size of persistence and headers is not the same." + data.get(0));
         }
         JSONObject result = new JSONObject();
         for (int index = 0; index < headers.size(); index++) {

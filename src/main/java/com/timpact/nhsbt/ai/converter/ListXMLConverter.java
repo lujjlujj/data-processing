@@ -22,9 +22,9 @@ import java.util.List;
  */
 public interface ListXMLConverter {
     /**
-     * Converts the data from List to XML
+     * Converts the persistence from List to XML
      *
-     * @param data    the list of data
+     * @param data    the list of persistence
      * @param headers the list of headers
      * @return XML String
      * @throws Exception if any error is occurred
@@ -33,9 +33,9 @@ public interface ListXMLConverter {
     /**
      * Converts XML to List
      *
-     * @param xml    the XML to the list of data
+     * @param xml    the XML to the list of persistence
      * @param headers the list of headers
-     * @return the list of data
+     * @return the list of persistence
      * @throws Exception if any error is occurred
      */
     public List<String> convertXML2CSV(String xml, List<String> headers) throws Exception;

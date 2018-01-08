@@ -5,10 +5,11 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
     <link href="css/signin.css" rel="stylesheet">
+    <link href="css/modal.css" rel="stylesheet">
 </head>
 <body ng-app="dataProcessingApp" ng-cloak>
     <div id="appForm" class="container" ng-controller="FormCtrl" >
-        <div class="alert alert-danger {{alertHiddenRequired}}" role="alert">
+        <div class="alert alert-danger animate-show animate-hide" ng-hide="alertHiddenRequired" role="alert">
             {{alertContent}}
         </div>
 
@@ -29,24 +30,26 @@
     </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
-
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-route.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.5.0/ui-bootstrap.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.5.0/ui-bootstrap-tpls.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-animate.js"></script>
+    <script src="js/messageModal.js"></script>
     <script type="text/javascript">
-        var app = angular.module('dataProcessingApp',['ng' , 'ngRoute']);
+        var app = angular.module('dataProcessingApp', ['ng', 'ngRoute', 'ngAnimate', 'ui.bootstrap']);
 
-        app.controller('FormCtrl', function($scope, $timeout, $http, $httpParamSerializerJQLike) {
+        app.controller('FormCtrl', function ($scope, $timeout, $http, $uibModal, $httpParamSerializerJQLike) {
 
             $scope.event = {
-                username: 'user',
+                username: 'Terry',
                 password: 'password',
                 submit: 'login'
             }
-            $scope.alertHiddenRequired = 'ng-hide';
+            $scope.alertHiddenRequired = true;
 
             $scope.cleanAllInput = function() {
                 $scope.event = {
-                    username: 'user',
+                    username: 'Terry',
                     password: 'password',
                     submit: 'login'
                 };
@@ -63,6 +66,7 @@
                             window.location = "/";
                         } else {
                             $scope.showAlert("Error", "Invalid Username and Password.");
+                            $scope.open();
                         }
                     }, function errorCallback(response) {
                         $scope.showAlert("Error", "Failed to login because the service is not available.");
@@ -70,9 +74,26 @@
             }
             $scope.showAlert = function (Title, TextContent) {
                 $scope.alertContent = TextContent;
-                $scope.alertHiddenRequired = '';
+                $scope.dialogTitle = Title;
+                $scope.textContent = TextContent;
+                $scope.alertHiddenRequired = false;
+                $timeout(function () {
+                    $scope.alertHiddenRequired = true;
+                },4000);
+            };
+
+
+            $scope.open = function () {
+                var modalInstance = $uibModal.open({
+                    animation: true,
+                    templateUrl: "templates/messageModal.html",
+                    controller: "MessageModalCtrl",
+                    scope: $scope
+                });
             };
         });
+
+        app.controller("MessageModalCtrl", modal);
     </script>
 </body>
 </html>

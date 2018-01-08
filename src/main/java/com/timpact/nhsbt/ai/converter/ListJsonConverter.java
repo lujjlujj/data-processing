@@ -22,9 +22,9 @@ import java.util.List;
  */
 public interface ListJsonConverter {
     /**
-     * Converts the data from List to JSON
+     * Converts the persistence from List to JSON
      *
-     * @param data    the list of data
+     * @param data    the list of persistence
      * @param headers the list of headers
      * @return json String
      * @throws Exception if any error is occurred
@@ -35,9 +35,9 @@ public interface ListJsonConverter {
     /**
      * Converts JSON to List
      *
-     * @param json    the json to the list of data
+     * @param json    the json to the list of persistence
      * @param headers the list of headers
-     * @return the list of data
+     * @return the list of persistence
      * @throws Exception if any error is occurred
      */
     public List<String> convertJSON2CSV(String json, List<String> headers) throws Exception;
