@@ -15,12 +15,12 @@ package com.timpact.nhsbt.ai.bean;
  * <code>WebDataFormat</code>
  *
  * <p>
- * The web input data format bean
+ * The web input persistence format bean
  * </p>
  */
 public class WebDataFormat {
     /**
-     * Type of data format like json, xml, csv.
+     * Type of persistence format like json, xml, csv.
      */
     private String type;
 

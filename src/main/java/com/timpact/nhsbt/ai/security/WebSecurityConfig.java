@@ -43,7 +43,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .headers()
                 .and()
                 .authorizeRequests()
-                .antMatchers("/login", "/login/**", "/js/**", "/css/**", "/img/**", "/web/img/**", "logout")
+                .antMatchers("/login", "/login/**", "/js/**", "/css/**", "/img/**",
+                        "/web/img/**","/templates/**", "logout", "/h2/**")
                 .permitAll().anyRequest().authenticated()
                 .and()
                 .formLogin()
@@ -65,6 +66,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication().withUser("user").password("password").roles("USER");
+        auth.inMemoryAuthentication().withUser("Terry").password("password").roles("USER");
     }
 }
