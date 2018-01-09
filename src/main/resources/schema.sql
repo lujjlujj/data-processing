@@ -1,22 +1,11 @@
-create table student
-(
-   id integer not null,
-   name varchar(255),
-   passport_number varchar(255),
-   primary key(id)
-);
-
-create table student_dense
-(
-   id integer not null,
-   name varchar(255),
-   passport_number varchar(255),
-   primary key(id)
-);
-
-create table student_missing
-(
-   id integer not null,
-   missing_columns varchar(255),
-   primary key(id)
-);
+CREATE  TABLE users (
+  username VARCHAR(45) NOT NULL ,
+  password VARCHAR(45) NOT NULL ,
+  enabled TINYINT NOT NULL DEFAULT 1 ,
+  PRIMARY KEY (username));
+CREATE TABLE user_roles (
+  user_role_id int(11) NOT NULL AUTO_INCREMENT,
+  username varchar(45) NOT NULL,
+  role varchar(45) NOT NULL,
+  PRIMARY KEY (user_role_id),
+  UNIQUE KEY uni_username_role (role,username));

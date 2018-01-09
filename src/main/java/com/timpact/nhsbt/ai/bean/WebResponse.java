@@ -25,6 +25,8 @@ public class WebResponse {
     public static final String CODE_INVALID_INPUT = "2";
 
     public static final String CODE_SUCCESS = "0";
+
+    public static final String CODE_DATA_ISSUE = "3";
     /**
      * The response code, please refer to CODE_ERROR | CODE_SUCCESS and so on.
      */

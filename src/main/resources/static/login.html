@@ -4,18 +4,19 @@
     <title>NHSBT AI Grant Data Processing</title>
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href="css/signin.css" rel="stylesheet">
     <link href="css/modal.css" rel="stylesheet">
 </head>
-<body ng-app="dataProcessingApp" ng-cloak>
-    <div id="appForm" class="container" ng-controller="FormCtrl" >
+<body ng-app="loginApp" ng-controller="FormCtrl" ng-cloak>
+    <div id="appForm" class="container " >
         <div class="alert alert-danger animate-show animate-hide" ng-hide="alertHiddenRequired" role="alert">
             {{alertContent}}
         </div>
 
-        <div class="card">
-            <div class="card-header text-white bg-primary mb-3">
-                Please sign in
+        <div class="card section-signin">
+            <div class="card-header text-white bg-primary-color mb-3">
+                NHSBT Arrest Time Prediction
             </div>
             <div class="panel-body">
                 <form class="form-signin" name="signinForm">
@@ -23,9 +24,12 @@
                     <input type="username" id="inputUsername" class="form-control" ng-model="event.username" placeholder="Username" required autofocus>
                     <label for="inputPassword" class="sr-only">Password</label>
                     <input type="password" id="inputPassword" class="form-control" ng-model="event.password" placeholder="Password" required>
-                    <button class="btn btn-lg btn-primary btn-block" type="submit" ng-click="submitFormData()" ng-disabled="signinForm.$invalid">Sign in</button>
+                    <button class="btn btn-lg bg-primary-color btn-block" type="submit" ng-click="submitFormData()" ng-disabled="signinForm.$invalid || disabledSigninRequired">
+                        <i class="fa fa-circle-o-notch fa-spin" style="font-size:20px" ng-hide="spinningHiddenRequired"></i> Sign in</span>
+                    </button>
                 </form>
             </div>
+            <div class="copyright">&copy; Copyright 2018 T-Impact Delivery Team</div>
         </div>
     </div>
 
@@ -35,65 +39,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.5.0/ui-bootstrap-tpls.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-animate.js"></script>
     <script src="js/messageModal.js"></script>
-    <script type="text/javascript">
-        var app = angular.module('dataProcessingApp', ['ng', 'ngRoute', 'ngAnimate', 'ui.bootstrap']);
-
-        app.controller('FormCtrl', function ($scope, $timeout, $http, $uibModal, $httpParamSerializerJQLike) {
-
-            $scope.event = {
-                username: 'Terry',
-                password: 'password',
-                submit: 'login'
-            }
-            $scope.alertHiddenRequired = true;
-
-            $scope.cleanAllInput = function() {
-                $scope.event = {
-                    username: 'Terry',
-                    password: 'password',
-                    submit: 'login'
-                };
-            }
-
-            $scope.submitFormData = function() {
-                $scope.alertHiddenRequired = 'ng-hide';
-                $http.post("/login", $httpParamSerializerJQLike($scope.event),
-                    {headers:{'Content-Type':'application/x-www-form-urlencoded',
-                        'x-requested-with':'ajax'
-                    }})
-                    .then(function successCallback(response) {
-                        if (response && response.status && response.status == '200' && response.data.success == 'true') {
-                            window.location = "/";
-                        } else {
-                            $scope.showAlert("Error", "Invalid Username and Password.");
-                            $scope.open();
-                        }
-                    }, function errorCallback(response) {
-                        $scope.showAlert("Error", "Failed to login because the service is not available.");
-                    });
-            }
-            $scope.showAlert = function (Title, TextContent) {
-                $scope.alertContent = TextContent;
-                $scope.dialogTitle = Title;
-                $scope.textContent = TextContent;
-                $scope.alertHiddenRequired = false;
-                $timeout(function () {
-                    $scope.alertHiddenRequired = true;
-                },4000);
-            };
-
-
-            $scope.open = function () {
-                var modalInstance = $uibModal.open({
-                    animation: true,
-                    templateUrl: "templates/messageModal.html",
-                    controller: "MessageModalCtrl",
-                    scope: $scope
-                });
-            };
-        });
-
-        app.controller("MessageModalCtrl", modal);
-    </script>
+    <script src="js/controller.js"></script>
 </body>
 </html>

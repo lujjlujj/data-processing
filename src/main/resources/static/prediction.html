@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>NHSBT AI Grant Arrest Time Prediction</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css"
+          integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="css/main.css" rel="stylesheet">
+    <link href="css/modal.css" rel="stylesheet">
+</head>
+<body ng-app="predictionApp" ng-cloak>
+<div id="appForm" ng-controller="predictionController">
+
+
+    <nav class="navbar navbar-inverse bg-primary-color">
+        <div flex="85" class="text-white">
+            <label>Welcome: {{user.principal.username}}</label>
+        </div>
+        <div flex="15">
+            <a class="text-white" href="#" ng-click="logout()">Logout</a>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="alert alert-danger animate-show animate-hide" ng-hide="alertHiddenRequired" role="alert">
+            {{alertContent}}
+        </div>
+
+        <div class="alert alert-success animate-show animate-hide" ng-hide="successMsgHiddenRequired" role="alert">
+            {{successMsgContent}}
+        </div>
+
+        <div class="card main-section">
+            <div class="card-header text-white bg-primary-color mb-3">
+                Please upload the file for prediction.
+            </div>
+            <div class="card-block">
+                <div class="row">
+                    <div class="col-md-12">
+                        <input class="main-button" type="file" files-input ng-model="fileArray">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <a href="#" class="btn bg-primary-color main-button" ng-click="upload()" ng-disabled="disabledPredictRequired">
+                            <i class="fa fa-circle-o-notch fa-spin" style="font-size:20px" ng-hide="spinningHiddenRequired"></i>Predict</a>
+                        <a href="#" class="btn bg-primary-color main-button" ng-click="confirmPrediction()"
+                           ng-hide="continueButtonRequired">Continue</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card main-section" ng-hide="showPredictionResultRequired">
+            <div class="card-header text-white bg-primary-color mb-3">
+                Prediction Result
+            </div>
+            <div class="card-block">
+                <table class="table main-table">
+                    <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Arrest Time (Days)</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="item in predictionResult">
+                        <th scope="row">{{item.id}}</th>
+                        <td>{{item.arrestTime}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card main-section" ng-hide="showInvalidDataRecordsRequired">
+            <div class="card-header text-white bg-primary-color mb-3">
+                Invalid Data Records
+            </div>
+            <div class="card-block">
+                <table class="table main-table">
+                    <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Column Names</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="item in validationDatas">
+                        <th scope="row">{{item.id}}</th>
+                        <td>{{item.columnNames}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-route.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-animate.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.5.0/ui-bootstrap.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.5.0/ui-bootstrap-tpls.js"></script>
+<script src="js/messageModal.js"></script>
+<script src="js/controller.js"></script>
+</body>
+</html>

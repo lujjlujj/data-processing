@@ -1,6 +1,6 @@
 ---
 applications:
-- name: data-processing
+- name: persistence-processing
   instances: 1
   memory: 256M
   host: data-processing-${random-word}

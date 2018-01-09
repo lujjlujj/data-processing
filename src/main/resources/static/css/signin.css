@@ -1,57 +1,55 @@
+@import "root.css";
+
 body {
     padding-top: 40px;
-    padding-bottom: 40px;
     background-color: #eee;
+    background-image: url("/img/bg.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+.section-signin {
+    max-width: 500px;
+    width: 450px;
+    margin:0 auto;
 }
 .form-signin {
     max-width: 330px;
     padding: 15px;
-    margin: 0 auto;
+    margin: 0 auto
 }
-.form-signin .form-signin-heading,
+.copyright {
+    font-size: 10px;
+    color: #808593;
+    margin:0 auto;
+}
+.form-signin .form-signin-heading, .form-signin .checkbox {
+    margin-bottom: 10px
+}
+
 .form-signin .checkbox {
-    margin-bottom: 10px;
+    font-weight: 400
 }
-.form-signin .checkbox {
-    font-weight: 400;
-}
+
 .form-signin .form-control {
     position: relative;
     box-sizing: border-box;
     height: auto;
     padding: 10px;
-    font-size: 16px;
+    font-size: 16px
 }
+
 .form-signin .form-control:focus {
-    z-index: 2;
+    z-index: 2
 }
+
 .form-signin input[type="username"] {
     margin-bottom: 3px;
     border-bottom-right-radius: 0;
-    border-bottom-left-radius: 0;
+    border-bottom-left-radius: 0
 }
+
 .form-signin input[type="password"] {
     margin-bottom: 10px;
     border-top-left-radius: 0;
-    border-top-right-radius: 0;
-}
-
-.animate-show,.animate-hide {
-    -webkit-transition:all linear 1s;
-    -moz-transition:all linear 1s;
-    -ms-transition:all linear 1s;
-    -o-transition:all linear 1s;
-    transition:all linear 1s;
-}
-
-.animate-show.ng-hide-remove,
-.animate-hide.ng-hide-add.ng-hide-add-active {
-    opacity: 0;
-    display: block !important;
-}
-
-.animate-hide.ng-hide-add,
-.animate-show.ng-hide-remove.ng-hide-remove-active {
-    opacity: 1;
-    display: block !important;
+    border-top-right-radius: 0
 }
