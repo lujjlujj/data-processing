@@ -1,1 +1,26 @@
-.animate-show,.animate-hide{-webkit-transition:all linear 1s;-moz-transition:all linear 1s;-ms-transition:all linear 1s;-o-transition:all linear 1s;transition:all linear 1s}.animate-show.ng-hide-remove,.animate-hide.ng-hide-add.ng-hide-add-active{opacity:0;display:block!important}.animate-hide.ng-hide-add,.animate-show.ng-hide-remove.ng-hide-remove-active{opacity:1;display:block!important}.bg-primary-color{background-color:#fe5500;color:#fff}.bg-primary-color:hover{color:#eee}
+.animate-show, .animate-hide {
+    -webkit-transition: all linear 1s;
+    -moz-transition: all linear 1s;
+    -ms-transition: all linear 1s;
+    -o-transition: all linear 1s;
+    transition: all linear 1s
+}
+
+.animate-show.ng-hide-remove, .animate-hide.ng-hide-add.ng-hide-add-active {
+    opacity: 0;
+    display: block !important
+}
+
+.animate-hide.ng-hide-add, .animate-show.ng-hide-remove.ng-hide-remove-active {
+    opacity: 1;
+    display: block !important
+}
+
+.bg-primary-color {
+    background-color: #fe5500;
+    color: #fff
+}
+
+.bg-primary-color:hover {
+    color: #eee
+}

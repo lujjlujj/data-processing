@@ -3,12 +3,14 @@ body {
     background-color: #eee;
     background-image: url("/img/bg.png");
     background-repeat: no-repeat;
-    background-size: cover;
+    background-size: 100%;
 }
 .logo {
     background-image: url("/img/nhs-logo.png");
     background-repeat: no-repeat;
-    background-size: cover;
+    background-size: 100%;
+    width: 100px;
+    height: 50px;
 }
 .container {
     padding-top: 40px;
@@ -25,4 +27,7 @@ body {
 }
 .main-table {
     width: 98%;
+}
+.main-navbar {
+    padding: 0.5px 2px;
 }

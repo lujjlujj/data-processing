@@ -1,1 +1,16 @@
-.fade.in{opacity:1}.modal-backdrop.in{filter:alpha(opacity=50);opacity:.5}.modal{margin-top:100px}.modal-header{padding:20px 0 5px 10px}
+.fade.in {
+    opacity: 1
+}
+
+.modal-backdrop.in {
+    filter: alpha(opacity=50);
+    opacity: .5
+}
+
+.modal {
+    margin-top: 100px
+}
+
+.modal-header {
+    padding: 20px 0 5px 10px
+}
