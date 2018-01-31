@@ -1,8 +1,8 @@
 angular.module('loginApp', ['ng', 'ngRoute', 'ngAnimate', 'ui.bootstrap']).controller('FormCtrl', function ($scope, $timeout, $http, $uibModal, $httpParamSerializerJQLike) {
 
     $scope.event = {
-        username: 'Terry',
-        password: 'password',
+        username: '',
+        password: '',
         submit: 'login'
     }
     $scope.alertHiddenRequired = true;
@@ -11,8 +11,8 @@ angular.module('loginApp', ['ng', 'ngRoute', 'ngAnimate', 'ui.bootstrap']).contr
 
     $scope.cleanAllInput = function() {
         $scope.event = {
-            username: 'Terry',
-            password: 'password',
+            username: '',
+            password: '',
             submit: 'login'
         };
     }

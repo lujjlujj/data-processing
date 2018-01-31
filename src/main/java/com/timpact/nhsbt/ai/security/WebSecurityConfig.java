@@ -11,6 +11,8 @@
  */
 package com.timpact.nhsbt.ai.security;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -26,6 +28,7 @@ import org.springframework.security.web.csrf.CsrfLogoutHandler;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 
 import javax.sql.DataSource;
+import java.io.IOException;
 
 /**
  * <code>WebSecurityConfig</code>
@@ -49,6 +52,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Value("${spring.datasource.password}")
     private String password;
+
+    @Value("${spring.datasource.isMemoryDatabase}")
+    private boolean connectMemoryDatabase;
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
@@ -93,12 +99,29 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      *
      * @return <code>DataSource</code>
      */
-    private DataSource getDataSource() {
+    private DataSource getDataSource() throws Exception {
         DriverManagerDataSource driverManagerDataSource = new DriverManagerDataSource();
-        driverManagerDataSource.setDriverClassName(driverClassName);
-        driverManagerDataSource.setUrl(url);
-        driverManagerDataSource.setUsername(username);
-        driverManagerDataSource.setPassword(password);
+        if (connectMemoryDatabase) {
+            driverManagerDataSource.setDriverClassName(driverClassName);
+            driverManagerDataSource.setUrl(url);
+            driverManagerDataSource.setUsername(username);
+            driverManagerDataSource.setPassword(password);
+        } else {
+            try {
+                String VCAP_SERVICES = System.getenv("VCAP_SERVICES");
+                JSONObject vcap = new JSONObject(VCAP_SERVICES);
+
+                JSONArray db2Array = (JSONArray) vcap.get("dashDB For Transactions");
+                JSONObject db2Instance = (JSONObject) db2Array.get(0);
+                JSONObject db2Credentials = (JSONObject) db2Instance.get("credentials");
+                driverManagerDataSource.setDriverClassName(driverClassName);
+                driverManagerDataSource.setUrl(db2Credentials.getString("jdbcurl"));
+                driverManagerDataSource.setUsername(db2Credentials.getString("username"));
+                driverManagerDataSource.setPassword(db2Credentials.getString("password"));
+            } catch (Exception e) {
+                throw new Exception("Failed to parse environment variable.", e);
+            }
+        }
         return driverManagerDataSource;
     }
 }

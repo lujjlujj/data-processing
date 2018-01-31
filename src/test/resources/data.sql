@@ -1,7 +1,10 @@
-
-insert into student
-values(10001,'Ranga', '');
-insert into student
-values(10002,'', 'A1234568');
-insert into student
-values(10003, '34342', 'A1234568');
+INSERT INTO users(username,password,enabled)
+VALUES ('Terry','password', true);
+INSERT INTO users(username,password,enabled)
+VALUES ('naveen','naveen', true);
+INSERT INTO user_roles (username, role)
+VALUES ('Terry', 'ROLE_USER');
+INSERT INTO user_roles (username, role)
+VALUES ('Terry', 'ROLE_ADMIN');
+INSERT INTO user_roles (username, role)
+VALUES ('naveen', 'ROLE_USER');

@@ -4,10 +4,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.timpact.nhsbt.ai</groupId>
-    <artifactId>prediction-app</artifactId>
+    <artifactId>prediction-webapp</artifactId>
     <version>1.0.0</version>
 
-    <name>prediction-app</name>
+    <name>prediction-webapp</name>
     <description>Web App to perform prediction.</description>
 
     <parent>
@@ -63,6 +63,16 @@
             <artifactId>jdom</artifactId>
             <version>1.1</version>
         </dependency>
+        <dependency>
+            <groupId>com.ibm.db2.jcc</groupId>
+            <artifactId>db2jcc4</artifactId>
+            <version>10.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ibm.db2</groupId>
+            <artifactId>db2jcc_license_cu</artifactId>
+            <version>9.7</version>
+        </dependency>
     </dependencies>
 
     <properties>
@@ -75,27 +85,35 @@
     <build>
         <plugins>
             <!--<plugin>-->
-                <!--<groupId>net.alchim31.maven</groupId>-->
-                <!--<artifactId>yuicompressor-maven-plugin</artifactId>-->
-                <!--<version>1.5.1</version>-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<goals>-->
-                            <!--<goal>compress</goal>-->
-                        <!--</goals>-->
-                    <!--</execution>-->
-                <!--</executions>-->
-                <!--<configuration>-->
-                    <!--<nosuffix>true</nosuffix>-->
-                    <!--<sourceDirectory>src/main/resources/static</sourceDirectory>-->
-                    <!--<force>true</force>-->
-                <!--</configuration>-->
+            <!--<groupId>net.alchim31.maven</groupId>-->
+            <!--<artifactId>yuicompressor-maven-plugin</artifactId>-->
+            <!--<version>1.5.1</version>-->
+            <!--<executions>-->
+            <!--<execution>-->
+            <!--<goals>-->
+            <!--<goal>compress</goal>-->
+            <!--</goals>-->
+            <!--</execution>-->
+            <!--</executions>-->
+            <!--<configuration>-->
+            <!--<nosuffix>true</nosuffix>-->
+            <!--<sourceDirectory>src/main/resources/static</sourceDirectory>-->
+            <!--<force>true</force>-->
+            <!--</configuration>-->
             <!--</plugin>-->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
         </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <excludes>
+                    <exclude>*.sql</exclude>
+                </excludes>
+            </resource>
+        </resources>
     </build>
 
     <pluginRepositories>
@@ -108,5 +126,11 @@
             </snapshots>
         </pluginRepository>
     </pluginRepositories>
-
+    <repositories>
+        <repository>
+            <id>3rdparty</id>
+            <name>3rdparty</name>
+            <url>https://artifacts.alfresco.com/nexus/content/repositories/public/</url>
+        </repository>
+    </repositories>
 </project>

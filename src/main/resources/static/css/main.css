@@ -28,6 +28,9 @@ body {
 .main-table {
     width: 98%;
 }
+.main-logout {
+    margin: 5px 5px;
+}
 .main-navbar {
     padding: 0.5px 2px;
 }

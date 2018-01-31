@@ -12,7 +12,9 @@
 package com.timpact.nhsbt.ai;
 
 import com.csvreader.CsvReader;
+import com.csvreader.CsvWriter;
 import com.timpact.nhsbt.ai.bean.InvalidInputData;
+import com.timpact.nhsbt.ai.bean.PredictionResult;
 import com.timpact.nhsbt.ai.bean.WebDataFormat;
 import com.timpact.nhsbt.ai.bean.WebResponse;
 import com.timpact.nhsbt.ai.integration.DefaultOutboundAdapter;
@@ -24,15 +26,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * <code>Application</code>
@@ -66,6 +78,10 @@ public class Application {
     private DefaultOutboundAdapter adapter;
 
     private final static String KEY_INPUT_DATA = "inputData";
+
+    private final static String KEY_INVALID_DATA = "invalidData";
+
+    private final static String KEY_PREDICTION_RESULT = "predictionResult";
 
     /**
      * Trigger the persistence converison function
@@ -103,7 +119,6 @@ public class Application {
     public @ResponseBody
     WebResponse uploadNPredict(@RequestParam(value = "file") MultipartFile file, HttpSession httpSession) {
         List<InvalidInputData> invalidInputDatas = new ArrayList<InvalidInputData>();
-        System.out.println(file.getContentType());
         List<List<String>> datas = new ArrayList<List<String>>();
         WebResponse response = new WebResponse();
         try {
@@ -142,11 +157,13 @@ public class Application {
             return response;
         }
         httpSession.setAttribute(KEY_INPUT_DATA, datas);
+        httpSession.setAttribute(KEY_INVALID_DATA, invalidInputDatas);
         if (invalidInputDatas.size() > 0) {
             response.setCode(WebResponse.CODE_DATA_ISSUE);
             response.setReturnValue(invalidInputDatas);
         } else {
             response.setReturnValue(adapter.predict(datas));
+            httpSession.setAttribute(KEY_PREDICTION_RESULT, response.getReturnValue());
             response.setCode(WebResponse.CODE_SUCCESS);
         }
         return response;
@@ -167,8 +184,96 @@ public class Application {
         } else {
             response.setCode(WebResponse.CODE_SUCCESS);
             response.setReturnValue(adapter.predict(datas));
+            httpSession.setAttribute(KEY_PREDICTION_RESULT, response.getReturnValue());
         }
         return response;
+    }
+
+    @RequestMapping(path = "/downloadInvalidDatas", method = RequestMethod.GET)
+    public void downloadInvalidDatas(HttpSession httpSession,
+                                     HttpServletResponse response) throws Exception {
+        try {
+            List<InvalidInputData> datas = (List<InvalidInputData>) httpSession.getAttribute(KEY_INVALID_DATA);
+            response.setContentType("application/octet-stream");
+            response.setHeader("Content-Disposition",
+                    "attachment;filename=" + UUID.randomUUID() + ".csv");
+            ServletOutputStream out = response.getOutputStream();
+            StringBuffer sb = generateCsvFileForInvalidData(datas);
+
+            InputStream in =
+                    new ByteArrayInputStream(sb.toString().getBytes("UTF-8"));
+
+            byte[] outputByte = new byte[4096];
+            //copy binary contect to output stream
+            while (in.read(outputByte, 0, 4096) != -1) {
+                out.write(outputByte, 0, 4096);
+            }
+            in.close();
+            out.flush();
+            out.close();
+        } catch (Exception e) {
+            log.error("Failed to download invalid datas with csv", e);
+            throw e;
+        }
+    }
+
+    private static StringBuffer generateCsvFileForInvalidData(List<InvalidInputData> datas) {
+        StringBuffer writer = new StringBuffer();
+        writer.append("ID");
+        writer.append(',');
+        writer.append("ColumnNames");
+        writer.append('\n');
+        for (InvalidInputData data : datas) {
+            writer.append(data.getId());
+            writer.append(',');
+            writer.append("\"" + data.getColumnNames() + "\"");
+            writer.append('\n');
+        }
+        return writer;
+    }
+
+    private static StringBuffer generateCsvFileForPredictionResult(List<PredictionResult> datas) {
+        StringBuffer writer = new StringBuffer();
+        writer.append("ID");
+        writer.append(',');
+        writer.append("Arrest Time");
+        writer.append('\n');
+        for (PredictionResult data : datas) {
+            writer.append(data.getId());
+            writer.append(',');
+            writer.append(data.getArrestTime());
+            writer.append('\n');
+        }
+        return writer;
+    }
+
+    @RequestMapping(path = "/downloadPredictionResult", method = RequestMethod.GET)
+    public void downloadPredictionResult(HttpSession httpSession,
+                                         HttpServletResponse response) throws Exception {
+
+        try {
+            List<PredictionResult> datas = (List<PredictionResult>) httpSession.getAttribute(KEY_PREDICTION_RESULT);
+
+            response.setContentType("application/octet-stream");
+            response.setHeader("Content-Disposition", "attachment; filename=" + UUID.randomUUID() + ".csv");
+            ServletOutputStream out = response.getOutputStream();
+            StringBuffer sb = generateCsvFileForPredictionResult(datas);
+
+            InputStream in =
+                    new ByteArrayInputStream(sb.toString().getBytes("UTF-8"));
+
+            byte[] outputByte = new byte[4096];
+            //copy binary contect to output stream
+            while (in.read(outputByte, 0, 4096) != -1) {
+                out.write(outputByte, 0, 4096);
+            }
+            in.close();
+            out.flush();
+            out.close();
+        } catch (Exception e) {
+            log.error("Failed to download prediction result with csv", e);
+            throw e;
+        }
     }
 
     public static void main(String[] args) {
