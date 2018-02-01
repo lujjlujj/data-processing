@@ -18,9 +18,17 @@
 
 .bg-primary-color {
     background-color: #fe5500;
-    color: #fff
+    color: #fff;
 }
 
 .bg-primary-color:hover {
     color: #eee
+}
+.panel-heading-custom {
+    background-color: #fe5500;
+    color: #fff;
+    padding:10px 15px;
+    border-bottom: 1px solid transparent;
+    border-top-left-radius: 3px;
+    border-bottom-right-radius: 3px;
 }

@@ -2,24 +2,23 @@
 body {
     background-color: #eee;
     background-image: url("/img/bg.png");
-    background-repeat: no-repeat;
+    background-repeat: repeat;
     background-size: 100%;
 }
-.logo {
-    background-image: url("/img/nhs-logo.png");
-    background-repeat: no-repeat;
-    background-size: 100%;
-    width: 100px;
-    height: 50px;
+.nhs-logo {
+    margin:4px;
+}
+.welcome-text {
+    margin:15px;
 }
 .container {
-    padding-top: 40px;
-    padding-bottom: 40px;
+    padding-top: 10px;
+    padding-bottom: 20px;
 }
 .main-button {
     margin: 5px 5px;
 }
-.main-button:hover {
+.main-button:hover, .main-button:focus{
     color: #eeeeee;
 }
 .main-section, .main-table {
@@ -29,8 +28,16 @@ body {
     width: 98%;
 }
 .main-logout {
-    margin: 5px 5px;
+    margin:15px 0px;
+    text-align:right;
+}
+.main-logout a {
+    color:#fff;
 }
 .main-navbar {
     padding: 0.5px 2px;
 }
+.main-pagination {
+    margin: 5px 5px;
+}
+

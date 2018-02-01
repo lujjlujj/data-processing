@@ -3,8 +3,7 @@
 <head>
     <title>NHSBT AI Grant Arrest Time Prediction</title>
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css"
-          integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href="css/main.css" rel="stylesheet">
     <link href="css/modal.css" rel="stylesheet">
@@ -12,21 +11,13 @@
 <body ng-app="predictionApp" ng-cloak>
 <div id="appForm" ng-controller="predictionController">
 
-
-    <nav class="navbar navbar-inverse main-navbar bg-primary-color d-flex">
-        <div>
-            <a class="navbar-brand" href="#">
-                <img src="/img/nhs-logo.png" width="100" height="50" alt="">
-            </a>
-        </div>
-        <div class="text-white">
-            <label>Welcome: {{user.principal.username}}</label>
-        </div>
-        <div class="ml-auto main-logout">
-            <a class="text-white" href="#" ng-click="logout()">Logout</a>
+    <nav class="navbar navbar-default bg-primary-color">
+        <div class="row">
+            <div class="col-xs-1 nhs-logo"><img src="/img/nhs-logo.png" width="100" height="50" alt=""></div>
+            <div class="col-xs-4 welcome-text"><label>Welcome: {{user.principal.username}}</label></div>
+            <div class="col-xs-6 main-logout"><a href="#" ng-click="logout()">Logout</a></div>
         </div>
     </nav>
-
 
     <div class="container">
         <div class="alert alert-danger animate-show animate-hide" ng-hide="alertHiddenRequired" role="alert">
@@ -37,11 +28,12 @@
             {{successMsgContent}}
         </div>
 
-        <div class="card main-section">
-            <div class="card-header text-white bg-primary-color mb-3">
+
+        <div class="panel panel-default main-section">
+            <div class="panel-heading-custom text-white">
                 Please upload the file for prediction.
             </div>
-            <div class="card-block">
+            <div class="panel-body">
                 <div class="row">
                     <div class="col-md-12">
                         <input class="main-button" type="file" files-input ng-model="fileArray">
@@ -49,8 +41,10 @@
                 </div>
                 <div class="row">
                     <div class="col-md-12">
-                        <a href="#" class="btn bg-primary-color main-button" ng-click="upload()" ng-disabled="disabledPredictRequired">
-                            <i class="fa fa-circle-o-notch fa-spin" style="font-size:20px" ng-hide="spinningHiddenRequired"></i>Predict</a>
+                        <a href="#" class="btn bg-primary-color main-button" ng-click="upload()"
+                           ng-disabled="disabledPredictRequired">
+                            <i class="fa fa-circle-o-notch fa-spin" style="font-size:20px"
+                               ng-hide="spinningHiddenRequired"></i>Predict</a>
                         <a href="#" class="btn bg-primary-color main-button" ng-click="confirmPrediction()"
                            ng-hide="continueButtonRequired">Continue</a>
                     </div>
@@ -58,11 +52,12 @@
             </div>
         </div>
 
-        <div class="card main-section" ng-hide="showPredictionResultRequired">
-            <div class="card-header text-white bg-primary-color mb-3">
+
+        <div class="panel panel-default main-section" ng-hide="showPredictionResultRequired">
+            <div class="panel-heading-custom text-white">
                 Prediction Result
             </div>
-            <div class="card-block">
+            <div class="panel-body">
                 <table class="table main-table">
                     <thead>
                     <tr>
@@ -71,20 +66,27 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr ng-repeat="item in predictionResult">
+                    <tr ng-repeat="item in getTempPredictionResult(prCurrentPageNumber)">
                         <th scope="row">{{item.id}}</th>
                         <td>{{item.arrestTime}}</td>
                     </tr>
                     </tbody>
                 </table>
+                <div class="text-right">
+                    <ul uib-pagination total-items="prTotalItems" ng-model="prCurrentPageNumber" max-size="5"
+                        class="pagination justify-content-end main-pagination" boundary-link-numbers="true"
+                        rotate="false" num-pages="prPageNumber"></ul>
+                    <pre>Page: {{prCurrentPageNumber}} / {{prPageNumber}}</pre>
+                    <a href="/downloadPredictionResult">Donwload</a>
+                </div>
             </div>
         </div>
 
-        <div class="card main-section" ng-hide="showInvalidDataRecordsRequired">
-            <div class="card-header text-white bg-primary-color mb-3">
+        <div class="panel panel-default main-section" ng-hide="showInvalidDataRecordsRequired">
+            <div class="panel-heading-custom text-white">
                 Invalid Data Records
             </div>
-            <div class="card-block">
+            <div class="panel-body">
                 <table class="table main-table">
                     <thead>
                     <tr>
@@ -93,12 +95,19 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr ng-repeat="item in validationDatas">
+                    <tr ng-repeat="item in getTempValidationDatas(vdCurrentPageNumber)">
                         <th scope="row">{{item.id}}</th>
                         <td>{{item.columnNames}}</td>
                     </tr>
                     </tbody>
                 </table>
+                <div class="text-right">
+                    <ul uib-pagination total-items="vdTotalItems" ng-model="vdCurrentPageNumber" max-size="5"
+                        class="pagination justify-content-end main-pagination" boundary-link-numbers="true"
+                        rotate="false" num-pages="vdPageNumber"></ul>
+                    <pre>Page: {{vdCurrentPageNumber}} / {{vdPageNumber}}</pre>
+                    <a href="/downloadInvalidDatas">Donwload</a>
+                </div>
             </div>
         </div>
     </div>

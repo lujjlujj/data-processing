@@ -112,8 +112,7 @@ angular.module('predictionApp', ['ng', 'ngRoute', 'ui.bootstrap', 'ngAnimate']).
             if (response && response.status && response.status == '200' && response.data.code == '0') {
                 $scope.showSuccessMsg("Message", "The prediction is performed successfully, please review the result.");
                 $scope.predictionResult = response.data.returnValue;
-                $scope.showPredictionResultRequired = false;
-                $scope.continueButtonRequired = true;
+                $scope.calculatePredictionResultPagination();
             } else if (response && response.status && response.status == '200' && response.data.code == '2') {
                 $scope.showAlert("Error", "The input file is invalid, please double check and upload the file again.");
             } else {
@@ -151,15 +150,13 @@ angular.module('predictionApp', ['ng', 'ngRoute', 'ui.bootstrap', 'ngAnimate']).
             if (response && response.status && response.status == '200' && response.data.code == '0') {
                 $scope.showSuccessMsg("Message", "The prediction is performed successfully, please review the result.");
                 $scope.predictionResult = response.data.returnValue;
-                $scope.continueButtonRequired = true;
-                $scope.showPredictionResultRequired = false;
+                $scope.calculatePredictionResultPagination();
             } else if (response && response.status && response.status == '200' && response.data.code == '2') {
                 $scope.showAlert("Error", "The input file is invalid, please double check.");
             } else if (response && response.status && response.status == '200' && response.data.code == '3') {
                 $scope.showAlert("Error", "Some data fields are empty, please click 'Continue' button if you still want to continue.");
                 $scope.validationDatas = response.data.returnValue;
-                $scope.showInvalidDataRecordsRequired = false;
-                $scope.continueButtonRequired = false;
+                $scope.calculateValidationDatasPagination();
             } else {
                 $scope.showAlert("Error", "Failed to perform prediction due to internal error, please contact system admin.");
             }
@@ -169,6 +166,30 @@ angular.module('predictionApp', ['ng', 'ngRoute', 'ui.bootstrap', 'ngAnimate']).
             $scope.showAlert("Error", "Failed to perform prediction due to internal error, please contact system admin.");
         });
     };
+
+    $scope.calculateValidationDatasPagination = function() {
+        $scope.showInvalidDataRecordsRequired = false;
+        $scope.continueButtonRequired = false;
+        $scope.vdTotalItems = $scope.validationDatas.length;
+        var modulus = $scope.validationDatas.length % 10;
+        $scope.vdPageNumber = ($scope.validationDatas.length - modulus) / 10;
+        if (modulus > 0) {
+            $scope.vdPageNumber = $scope.vdPageNumber + 1;
+        }
+        $scope.vdCurrentPageNumber = 1;
+    }
+
+    $scope.calculatePredictionResultPagination = function() {
+        $scope.continueButtonRequired = true;
+        $scope.showPredictionResultRequired = false;
+        $scope.prTotalItems = $scope.predictionResult.length;
+        var modulus = $scope.predictionResult.length % 10;
+        $scope.prPageNumber = ($scope.predictionResult.length - modulus) / 10;
+        if (modulus > 0) {
+            $scope.prPageNumber = $scope.prPageNumber + 1;
+        }
+        $scope.prCurrentPageNumber = 1;
+    }
 
     $scope.trigger = function (type) {
         $scope.alertHiddenRequired = true;
@@ -184,7 +205,20 @@ angular.module('predictionApp', ['ng', 'ngRoute', 'ui.bootstrap', 'ngAnimate']).
         }, function errorCallback(response) {
             $scope.showAlert("Error", "Failed to trigger.");
         });
+    };
 
+    $scope.getTempValidationDatas = function(vdCurrentPageNumber) {
+        var from = ($scope.vdCurrentPageNumber - 1) * 10;
+        var to = from + 10;
+        $scope.tempValidationDatas = $scope.validationDatas.slice(from, to);
+        return $scope.tempValidationDatas;
+    };
+
+    $scope.getTempPredictionResult = function(prCurrentPageNumber) {
+        var from = ($scope.prCurrentPageNumber - 1) * 10;
+        var to = from + 10;
+        $scope.tempPredictionResult = $scope.predictionResult.slice(from, to);
+        return $scope.tempPredictionResult;
     };
 
     $scope.logout = function () {
