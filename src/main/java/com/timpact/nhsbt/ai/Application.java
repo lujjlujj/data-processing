@@ -226,7 +226,7 @@ public class Application {
         for (InvalidInputData data : datas) {
             writer.append(data.getId());
             writer.append(',');
-            writer.append("\"" + data.getColumnNames() + "\"");
+            writer.append("\"" + data.getColumnNames() + "");
             writer.append('\n');
         }
         return writer;
